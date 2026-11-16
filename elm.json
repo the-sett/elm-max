@@ -1,6 +1,6 @@
 {
     "type": "package",
-    "name": "eco-lab/tensor",
+    "name": "the-sett/elm-max",
     "summary": "Typed tensor graphs for Modular MAX, with autodiff, layers and optimizers",
     "license": "BSD-3-Clause",
     "version": "1.0.0",

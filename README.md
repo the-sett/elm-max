@@ -1,4 +1,4 @@
-# eco-lab/tensor
+# the-sett/elm-max
 
 Write neural networks, their training and their inference in Elm, as typed tensor graphs that
 Modular MAX can compile and run on a CPU or a GPU, or that run in plain Elm for tests and small
@@ -7,7 +7,7 @@ mixing up axes, ranks or dtypes is a compile error, and the sizes the types cann
 as the graph is built, before anything runs it.
 
 ```sh
-elm install eco-lab/tensor
+elm install the-sett/elm-max
 ```
 
 ## The idea
