@@ -1,0 +1,4 @@
+build/
+work/
+mnist/data/
+__pycache__/

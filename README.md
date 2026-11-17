@@ -10,6 +10,10 @@ as the graph is built, before anything runs it.
 elm install the-sett/elm-max
 ```
 
+To see it train networks on MAX straight away, follow the step-by-step instructions in
+[`examples/README.md`](https://github.com/the-sett/elm-max/blob/master/examples/README.md): they
+list what to install (a C++ compiler, uv and eco) and then build and run each example with `make`.
+
 ## The idea
 
 A tensor is a description of a computation, not its elements. Making one works out its shape and
@@ -190,7 +194,8 @@ The program, compiled by eco to a shared library, is linked with `host/max_host.
 `libmax`, and started as `max_host WORKDIR FLAGS-JSON`: compiled graphs are written to `WORKDIR`,
 and `FLAGS-JSON` is the program's flags. The command `finish` ends the program with an exit code.
 A program that also declares `port logOut : String -> Cmd msg` has each string it sends there
-printed by the host.
+printed by the host. The [examples](#examples-and-checks) build and run programs this way, and
+their README lists what to install.
 
 **The in-Elm backend** (`Max.Session.inElm GotMax`) runs the graphs with `Tensor.Eval` and keeps the
 resident buffers in the session. It needs no ports and works wherever Elm runs, in tests or in a
@@ -240,3 +245,29 @@ negative `Int`s.
 A random draw is a pure function of its seed, distribution, parameters, dtype and shape: two draws
 equal in all of these are the same tensor, with the same values. Draws that should be independent
 need separate seeds, which `Tensor.Random.salt` derives from one seed inside the graph.
+
+## Examples and checks
+
+The repository holds, besides the package and its unit tests, complete programs and two suites of
+checks that run the package on MAX. Each folder has a README and a Makefile.
+
+- **[`examples/`](https://github.com/the-sett/elm-max/tree/master/examples)**: programs that train
+  on MAX, compiled by eco and linked with the host. `mnist/` trains MNIST classifiers (SGD, AdamW, a
+  deeper network with dropout, a CNN, and a LoRA adapter on a saved network) with checkpoints, next
+  to a NumPy version of the SGD run; `charlm/` trains a small transformer language model on a text
+  corpus. To run them, follow
+  [`examples/README.md`](https://github.com/the-sett/elm-max/blob/master/examples/README.md):
+  install a C++ compiler, uv and eco, clone this repository, then `cd examples` and
+  `make run-mnist`; the first run installs MAX and downloads the data itself. They use the
+  published package; `LOCAL=1` builds against the checkout instead.
+- **[`opcheck/`](https://github.com/the-sett/elm-max/tree/master/opcheck)**: every operation and its
+  gradients, one graph per family of operations, checked against NumPy, on MAX through its Python
+  API and again with `Tensor.Eval` under Node without MAX. It needs only stock Elm, Node and MAX's
+  Python package. `mo-inventory.md` there records how MAX's own graph API writes each operation.
+- **[`apicheck/`](https://github.com/the-sett/elm-max/tree/master/apicheck)**: the larger parts of
+  the API on small synthetic models, run on MAX through the host: generation with a KV cache
+  against a full-context graph, checkpoint import from a safetensors file, a UNet-shaped block
+  against NumPy, and 64-bit integers through MAX.
+
+`opcheck` and `apicheck` build from the repository's `src/`, so they check the code as it stands.
+The unit tests in `tests/` run with `elm-test-rs`, without MAX.
